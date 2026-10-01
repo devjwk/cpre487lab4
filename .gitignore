@@ -1,0 +1,17 @@
+*.runs/
+*.cache/
+*.hw/
+*.ip_user_files/
+*.sim/
+.Xil/
+worksapce/
+*.jou
+*.log
+*.str
+build/
+*.o
+__pycache__/
+.ipynb_checkpoints/
+log_data/
+train_data/
+tensorflow-datasets/
