@@ -1,3 +1,4 @@
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -293,6 +294,11 @@ void runQuantCompare(const Model& model, const Path& basePath) {
                                    ? dequantize(out.get<i8>(k), act.outScale, act.outZero)
                                    : out.get<fp32>(k);
         }
+
+        // Save the dequantized output for the Section 5 visualization (util/plot_channel.py)
+        std::ofstream dump(Path(basePath / "model" / ("q" + std::to_string(QUANT_BITS))) / ("image_0_layer_" + std::to_string(i) + "_deq.bin"),
+                           std::ios::binary);
+        dump.write((const char*)deq.raw(), deq.getParams().byte_size());
 
         std::cout << "Layer " << i << " " << layerName(model[i].getLType()) << ": max error " << deq.maxDiff<fp32>(expected)
                   << ", cosine similarity " << deq.compare<fp32>(expected) << std::endl;
