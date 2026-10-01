@@ -1,3 +1,5 @@
+#include <chrono>
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -333,6 +335,54 @@ void runQuantCompare(const Model& model, const Path& basePath) {
     }
 }
 
+// Lab 4 Sections 5.1 / 6: top-1 / top-10 accuracy and latency over the exported validation images
+// (data/val/val_images_u8.bin: N x 64x64x3 uint8, val_labels_i32.bin: N int32). Run with `./build/ml val [N]`.
+void runValidation(std::size_t numImages) {
+    Path basePath("data");
+    Model model = buildToyModel(basePath / "model");
+    model.allocLayers();
+
+    std::ifstream imageFile(basePath / "val" / "val_images_u8.bin", std::ios::binary);
+    std::ifstream labelFile(basePath / "val" / "val_labels_i32.bin", std::ios::binary);
+    if (!imageFile.is_open() || !labelFile.is_open()) throw std::runtime_error("Missing data/val files (run util/export_val.py)");
+
+    const std::size_t imageSize = 64 * 64 * 3;
+    std::vector<ui8> pixels(imageSize);
+    LayerData input(model[0].getInputParams());
+    input.allocData();
+
+    std::size_t top1 = 0, top10 = 0, done = 0;
+    double totalMs = 0, minMs = 1e30, maxMs = 0;
+    for (; done < numImages; done++) {
+        i32 label;
+        if (!imageFile.read((char*)pixels.data(), imageSize) || !labelFile.read((char*)&label, sizeof(label))) break;
+        for (std::size_t k = 0; k < imageSize; k++) input.get<fp32>(k) = pixels[k] / 255.0f;  // same normalization as Lab 1
+
+        auto start = std::chrono::steady_clock::now();
+        const LayerData& output = model.inference(input, Layer::InfType::NAIVE);
+        double ms = std::chrono::duration<double, std::milli>(std::chrono::steady_clock::now() - start).count();
+        totalMs += ms;
+        if (ms < minMs) minMs = ms;
+        if (ms > maxMs) maxMs = ms;
+
+        // Rank of the true class; ties go to the lower index (same as argmax), so a constant output is not "correct"
+        const fp32 p = output.get<fp32>(label);
+        std::size_t rank = 0;
+        for (i32 k = 0; k < 200; k++) {
+            fp32 v = output.get<fp32>(k);
+            if (v > p || (v == p && k < label)) rank++;
+        }
+        if (rank == 0) top1++;
+        if (rank < 10) top10++;
+    }
+
+    std::cout << "\n===== Validation (" << QUANT_BITS << " bit, " << done << " images) =====\n"
+              << "Top-1 accuracy:  " << 100.0 * top1 / done << "%\n"
+              << "Top-10 accuracy: " << 100.0 * top10 / done << "%\n"
+              << "Latency per image: avg " << totalMs / done << " ms, min " << minMs << " ms, max " << maxMs << " ms\n";
+    model.freeLayers();
+}
+
 void runTests() {
     // Base input data path (determined from current directory of where you are running the command)
     Path basePath("data");  // May need to be altered for zedboards loading from SD Cards
@@ -380,7 +430,11 @@ int main() {
     FileServer::start_file_transfer_server();
 }
 #else
-int main() {
-    ML::runTests();
+int main(int argc, char** argv) {
+    if (argc > 1 && std::string(argv[1]) == "val") {
+        ML::runValidation(argc > 2 ? std::atoi(argv[2]) : 1000);
+    } else {
+        ML::runTests();
+    }
 }
 #endif
