@@ -16,3 +16,4 @@ log_data/
 train_data/
 tensorflow-datasets/
 *.h5
+*_deq.bin
