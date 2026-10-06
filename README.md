@@ -26,6 +26,7 @@ Iowa State University · CprE 487/587 · Lab 4 · Team 06
 | 8-bit size | 8-bit latency | Top-1 · fp32 → 8-bit | Top-1 · 4-bit / 2-bit |
 | :---: | :---: | :---: | :---: |
 | **4× smaller** | **1.6× faster** | **23.5% → 23.8%** | **6.6% / 0.3%** |
+
 | | |
 |---|---|
 | Period | September 27 – October 5, 2026 |
