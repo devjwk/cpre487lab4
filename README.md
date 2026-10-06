@@ -1,15 +1,11 @@
 <div align="center">
 
-# CNN QUANTIZATION
+<img src="assets/banner.svg" alt="CNN QUANTIZATION — How small and fast can the model get before it stops working?" width="100%">
 
-### How small and fast can the model get before it stops working?
-
-**C++ · Python · TensorFlow**
-
-![Inference](https://img.shields.io/badge/Inference-C%2B%2B-6366F1?style=flat-square)
-![Tooling](https://img.shields.io/badge/Tooling-Python-0F172A?style=flat-square)
-![Precision](https://img.shields.io/badge/Precision-8%20%2F%204%20%2F%202%20bit-0891B2?style=flat-square)
-![Stage](https://img.shields.io/badge/Stage-Complete-F59E0B?style=flat-square)
+![Inference](https://img.shields.io/badge/Inference-C%2B%2B-7E22CE?style=flat-square&labelColor=2E1065)
+![Tooling](https://img.shields.io/badge/Tooling-Python-A21CAF?style=flat-square&labelColor=2E1065)
+![Precision](https://img.shields.io/badge/Precision-8%20%2F%204%20%2F%202%20bit-BE185D?style=flat-square&labelColor=2E1065)
+![Stage](https://img.shields.io/badge/Stage-Complete-E11D48?style=flat-square&labelColor=2E1065)
 
 Iowa State University · CprE 487/587 · Lab 4 · Team 06
 
@@ -99,14 +95,16 @@ file is not tracked in this repository.
 ## Where this lab fits
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#7E22CE", "primaryTextColor": "#ffffff", "primaryBorderColor": "#2E1065", "lineColor": "#94A3B8", "secondaryColor": "#7E22CE", "tertiaryColor": "#2E1065", "clusterBkg": "#F8FAFC", "clusterBorder": "#94A3B8", "edgeLabelBackground": "#F1F5F9", "fontFamily": "ui-sans-serif, system-ui, sans-serif"}}}%%
 flowchart LR
     L1["Lab 1 · Train in TensorFlow"] --> L2["Lab 2 · C++ framework"] --> L3["Lab 3 · MAC units"] --> L4["Lab 4 · Quantization"] --> L5["Lab 5 · Hardware integration"]
-    style L4 fill:#6366F1,color:#ffffff,stroke:#4338CA
+    style L4 fill:#F0ABFC,color:#0B1220,stroke:#2E1065
 ```
 
 ## Quantized inference path
 
 ```mermaid
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#7E22CE", "primaryTextColor": "#ffffff", "primaryBorderColor": "#2E1065", "lineColor": "#94A3B8", "secondaryColor": "#7E22CE", "tertiaryColor": "#2E1065", "clusterBkg": "#F8FAFC", "clusterBorder": "#94A3B8", "edgeLabelBackground": "#F1F5F9", "fontFamily": "ui-sans-serif, system-ui, sans-serif"}}}%%
 flowchart LR
     P["Profile activation ranges"] --> X["Export scale, zero-point, int8 weights"]
     X --> A["Accumulate (input − zero_point) × weight in int32"]
