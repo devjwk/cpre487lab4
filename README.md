@@ -5,6 +5,18 @@ Authors: Zach Dixon, Jongwoo Kim
 Post-training quantization (8, 4 and 2 bit) of the TinyImageNet CNN from Labs 1-2, implemented in our
 C++ inference framework and compared against the original fp32 model.
 
+| | |
+|---|---|
+| Period | September 27 – October 5, 2026 |
+| Team | 2 — Zach Dixon, Jongwoo Kim |
+| My role | All of the Lab 4 work in this repository: profiling scripts, quantized export, the integer inference path in C++, evaluation, and the report |
+| Stack | C++, Python, TensorFlow/Keras, Jupyter, Make |
+| Related | [Lab 2 — C++ framework](https://github.com/devjwk/487lab2), [Lab 3 — MAC units](https://github.com/devjwk/487lab3), [Lab 5 — hardware integration](https://github.com/devjwk/cpre487lab5) |
+
+## Why
+
+The fp32 model is about 3 MB and takes 143 ms per image on the lab PC. An embedded target has far less memory and no fast floating point. This lab measures how much size and time quantization saves, and how much accuracy it costs at 8, 4 and 2 bits.
+
 ## Repository layout
 
 ```
@@ -61,3 +73,44 @@ build loads `data/model/*.bin`.
 
 The notebook needs the Lab 1 environment (`lab1_venv`) and `CNN_TinyImageNet.h5` next to it; the model
 file is not tracked in this repository.
+
+## My role
+
+The Lab 4 commits in this repository are mine. `lab1_06/`, `lab2_src_06/` and `lab3_src_6/` are our earlier team submissions, included as the base this lab builds on.
+
+- Profiled weight and activation ranges (`weight_hist.py`, `act_minmax.py`).
+- Wrote the export script that computes each layer's scale and zero-point and writes int8 weights and int32 biases (`quantize_export.py`).
+- Added the quantized inference path to the C++ framework (`Quant.h`, `computeQuantized` in the conv and dense layers) behind one build flag, `QUANT_BITS`.
+- Added a validation mode (`./build/ml val`) and the script that exports 1,000 validation images.
+- Wrote the report (`submission/lab4_report_06.pdf`).
+
+## What I learned
+
+**Technical**
+- How scale and zero-point map a real range onto integers, and why accumulation must happen in int32 before requantizing for the next layer.
+- Where accuracy collapses. At 2 bits, activations after conv2 round to zero and the network outputs a constant.
+- Outliers set the scale. One dense-layer weight near −1.32 stretches the range for all the others.
+- Memory is more than weights: allocating every layer's activations at once pushed the 8-bit model past a 1,000 KB budget, while reusing two buffers fits it.
+
+**Teamwork**
+- Making results reproducible on three machines (lab PC, GPU VM, laptop) with one repository and one build flag.
+- Stating clearly in the report which numbers were measured and which were calculated.
+
+## Resources used
+
+- Sze, Chen, Yang and Emer, *Efficient Processing of Deep Neural Networks*
+- Course DNN framework template and the Lab 4 handout
+- TensorFlow/Keras and TensorFlow Datasets for the reference model and validation images
+
+## Limitations and next steps
+
+- 4-bit and 2-bit values sit in int8 containers, so they save neither space nor time over 8-bit. Bit-packing is needed to realize the 388 KB and 196 KB figures.
+- 2-bit accuracy is at chance level. Per-layer precision (keeping early layers at 8 bits) is the next thing to try, and is part of Lab 5.
+- The base model is weak (23.5% top-1), which limits what the comparison can show. Improving training was out of scope.
+- Latency was measured on a desktop CPU. The ZedBoard numbers and the hardware MAC path come in Lab 5.
+
+## Figure
+
+Feature maps of the same channels at fp32, 8, 4 and 2 bits:
+
+![Feature maps across bit widths](lab4/util/quant_channel_compare.png)
