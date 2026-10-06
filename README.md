@@ -1,10 +1,31 @@
-# CprE 487/587 Lab 4 - Quantization and Reduced Precision (Team 06)
+<div align="center">
 
-Authors: Zach Dixon, Jongwoo Kim
+# CNN QUANTIZATION
 
-Post-training quantization (8, 4 and 2 bit) of the TinyImageNet CNN from Labs 1-2, implemented in our
-C++ inference framework and compared against the original fp32 model.
+### How small and fast can the model get before it stops working?
 
+**C++ · Python · TensorFlow**
+
+![Inference](https://img.shields.io/badge/Inference-C%2B%2B-6366F1?style=flat-square)
+![Tooling](https://img.shields.io/badge/Tooling-Python-0F172A?style=flat-square)
+![Precision](https://img.shields.io/badge/Precision-8%20%2F%204%20%2F%202%20bit-0891B2?style=flat-square)
+![Stage](https://img.shields.io/badge/Stage-Complete-F59E0B?style=flat-square)
+
+Iowa State University · CprE 487/587 · Lab 4 · Team 06
+
+[Why](#why) · [Where this lab fits](#where-this-lab-fits) · [My role](#my-role) · [Results](#results-lab-machine-1000-validation-images) · [Limitations](#limitations-and-next-steps)
+
+</div>
+
+---
+
+> **Where it stands — Complete**  
+> Post-training quantization of a TinyImageNet CNN at 8, 4 and 2 bits, in one C++ code base, measured on 1,000 validation images.  
+> 8 bits keeps accuracy. 4 bits loses most of it. 2 bits is at chance level.
+
+| 8-bit size | 8-bit latency | Top-1 · fp32 → 8-bit | Top-1 · 4-bit / 2-bit |
+| :---: | :---: | :---: | :---: |
+| **4× smaller** | **1.6× faster** | **23.5% → 23.8%** | **6.6% / 0.3%** |
 | | |
 |---|---|
 | Period | September 27 – October 5, 2026 |
@@ -73,6 +94,25 @@ build loads `data/model/*.bin`.
 
 The notebook needs the Lab 1 environment (`lab1_venv`) and `CNN_TinyImageNet.h5` next to it; the model
 file is not tracked in this repository.
+
+## Where this lab fits
+
+```mermaid
+flowchart LR
+    L1["Lab 1 · Train in TensorFlow"] --> L2["Lab 2 · C++ framework"] --> L3["Lab 3 · MAC units"] --> L4["Lab 4 · Quantization"] --> L5["Lab 5 · Hardware integration"]
+    style L4 fill:#6366F1,color:#ffffff,stroke:#4338CA
+```
+
+## Quantized inference path
+
+```mermaid
+flowchart LR
+    P["Profile activation ranges"] --> X["Export scale, zero-point, int8 weights"]
+    X --> A["Accumulate (input − zero_point) × weight in int32"]
+    A --> D["Dequantize · ReLU"]
+    D --> Q["Requantize to int8 for the next layer"]
+    Q -->|"next layer"| A
+```
 
 ## My role
 
