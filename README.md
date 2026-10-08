@@ -119,11 +119,17 @@ file is not tracked in this repository.
 
 ## Team and credits
 
-Lab 4 was submitted by Zach Dixon and Jongwoo Kim; the report lists both of us as authors.
+Lab 4 is the work of Team 06: Zach Dixon and Jongwoo Kim. The report lists both of us as authors.
 
-- **In this repository:** the Lab 4 commits are Jongwoo's: the profiling scripts (`weight_hist.py`, `act_minmax.py`), the export script that computes each layer's scale and zero point (`quantize_export.py`), the quantized inference path in C++ (`Quant.h`, `computeQuantized` in the conv and dense layers) behind the `QUANT_BITS` build flag, the validation mode (`./build/ml val`) with the script that exports 1,000 validation images, and the report.
-- **Earlier team work it builds on:** `lab1_06/`, `lab2_src_06/` and `lab3_src_6/` are our submissions for Labs 1 to 3.
-- Corrections to this list are welcome.
+| | Zach Dixon | Jongwoo Kim |
+|---|---|---|
+| Lab 4 report | Co-author | Co-author |
+| Quantization code in this repository | | Profiling scripts (`weight_hist.py`, `act_minmax.py`), the export of scales, zero points and int8 weights (`quantize_export.py`), the quantized inference path in C++ (`Quant.h`, `computeQuantized`) behind the `QUANT_BITS` flag, the validation mode and the 1,000-image export |
+| Lab 2 framework this lab extends (`lab2_src_06/`) | Timing and logging structure | Layer implementation and performance measurements |
+| Lab 3 hardware this lab leads to (`lab3_src_6/`) | A `staged_mac` design, the ILA debug setup and the first board test program | The 8-case board test with timing, and the re-runs of simulation and synthesis |
+| Lab 1 notebook and exported weights (`lab1_06/`) | Joint work | Joint work |
+
+The table only lists what the commit history and the reports show. Both of us can edit this repository, so please correct or extend it.
 
 ## What I learned (Jongwoo)
 
