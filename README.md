@@ -30,7 +30,7 @@ Iowa State University · CprE 487/587 · Lab 4 · Team 06
 | My role | All of the Lab 4 work in this repository: profiling scripts, quantized export, the integer inference path in C++, evaluation, and the report |
 | Stack | C++, Python, TensorFlow/Keras, Jupyter, Make |
 | Reports | [Lab 4 report (PDF)](submission/lab4_report_06.pdf) · [Lab 1 report (PDF)](lab1_06/Lab01%20Report_06.pdf) |
-| Related | [Lab 2 — C++ framework](https://github.com/devjwk/487lab2), [Lab 3 — MAC units](https://github.com/devjwk/487lab3), [Lab 5 — hardware integration](https://github.com/devjwk/cpre487lab5) |
+| Related | [Lab 2 — C++ framework](https://github.com/devjwk/cpre487lab2), [Lab 3 — MAC units](https://github.com/devjwk/487lab3), [Lab 5 — hardware integration](https://github.com/devjwk/cpre487lab5) |
 
 ## Why
 
