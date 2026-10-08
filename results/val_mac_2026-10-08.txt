@@ -1,0 +1,30 @@
+=== QUANT_BITS=32 (build exit ok: yes)
+[Info]: --- Building Toy Model ---
+
+===== Validation (32 bit, 1000 images) =====
+Top-1 accuracy:  23.5%
+Top-10 accuracy: 60.5%
+Latency per image: avg 107.086 ms, min 100.881 ms, max 186.673 ms
+=== QUANT_BITS=8 (build exit ok: yes)
+[Info]: Quantized model: 8 bit, loading data/model/q8
+
+===== Validation (8 bit, 1000 images) =====
+Top-1 accuracy:  23.8%
+Top-10 accuracy: 60.4%
+Latency per image: avg 43.9975 ms, min 42.6164 ms, max 108.458 ms
+=== QUANT_BITS=4 (build exit ok: yes)
+[Info]: Quantized model: 4 bit, loading data/model/q4
+
+===== Validation (4 bit, 1000 images) =====
+Top-1 accuracy:  6.6%
+Top-10 accuracy: 24.1%
+Latency per image: avg 45.5606 ms, min 42.4757 ms, max 816.755 ms
+=== QUANT_BITS=2 (build exit ok: yes)
+[Info]: Quantized model: 2 bit, loading data/model/q2
+
+===== Validation (2 bit, 1000 images) =====
+Top-1 accuracy:  0.3%
+Top-10 accuracy: 4.6%
+Latency per image: avg 43.497 ms, min 41.9474 ms, max 115.671 ms
+
+[exited with code 0]

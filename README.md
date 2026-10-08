@@ -9,7 +9,7 @@
 
 Iowa State University · CprE 487/587 · Lab 4 · Team 06
 
-[Why](#why) · [Where this lab fits](#where-this-lab-fits) · [My role](#my-role) · [Results](#results-lab-machine-1000-validation-images) · [Limitations](#limitations-and-next-steps)
+[Why](#why) · [Where this lab fits](#where-this-lab-fits) · [Team and credits](#team-and-credits) · [Results](#results) · [Limitations](#limitations-and-next-steps)
 
 </div>
 
@@ -19,24 +19,24 @@ Iowa State University · CprE 487/587 · Lab 4 · Team 06
 > Post-training quantization of a TinyImageNet CNN at 8, 4 and 2 bits, in one C++ code base, measured on 1,000 validation images.  
 > 8 bits keeps accuracy. 4 bits loses most of it. 2 bits is at chance level.
 
-| 8-bit size | 8-bit latency | Top-1 · fp32 → 8-bit | Top-1 · 4-bit / 2-bit |
-| :---: | :---: | :---: | :---: |
-| **4× smaller** | **1.6× faster** | **23.5% → 23.8%** | **6.6% / 0.3%** |
+<img src="assets/at_a_glance.svg" alt="At a glance: 8-bit parameters are 4 times smaller than fp32 (773 KB vs 3,081 KB); 8-bit inference is 1.6 times faster on the lab PC (88 ms vs 143 ms); top-1 accuracy is 23.8% at 8 bits vs 23.5% at fp32; at 4 bits it falls to 6.6% and at 2 bits to 0.3%" width="100%">
 
 | | |
 |---|---|
 | Period | September 27 – October 5, 2026 |
 | Team | 2 — Zach Dixon, Jongwoo Kim |
-| My role | All of the Lab 4 work in this repository: profiling scripts, quantized export, the integer inference path in C++, evaluation, and the report |
 | Stack | C++, Python, TensorFlow/Keras, Jupyter, Make |
-| Reports | [Lab 4 report (PDF)](submission/lab4_report_06.pdf) · [Lab 1 report (PDF)](lab1_06/Lab01%20Report_06.pdf) |
-| Related | [Lab 2 — C++ framework](https://github.com/devjwk/cpre487lab2), [Lab 3 — MAC units](https://github.com/devjwk/cpre487lab3), [Lab 5 — hardware integration](https://github.com/devjwk/cpre487lab5) |
+| Deliverables | [Lab 4 report (PDF)](submission/lab4_report_06.pdf) · [Source archive (zip)](submission/lab4_src_06.zip) |
+| Related | [Lab 1 — TensorFlow baseline](https://github.com/devjwk/cpre487lab1), [Lab 2 — C++ framework](https://github.com/devjwk/cpre487lab2), [Lab 3 — MAC units](https://github.com/devjwk/cpre487lab3), [Lab 5 — hardware integration](https://github.com/devjwk/cpre487lab5) |
 
 ## Why
 
 The fp32 model is about 3 MB and takes 143 ms per image on the lab PC. An embedded target has far less memory and no fast floating point. This lab measures how much size and time quantization saves, and how much accuracy it costs at 8, 4 and 2 bits.
 
 ## Repository layout
+
+<details>
+<summary>Folders and files</summary>
 
 ```
 lab4/
@@ -45,9 +45,16 @@ lab4/
 lab1_06/         Lab 1 submission (notebook, exported weights)
 lab2_src_06/     Lab 2 submission (fp32 C++ framework this lab builds on)
 lab3_src_6/      Lab 3 submission (MAC unit)
+results/         validation output of the October 8 re-run
+submission/      report PDF and the source archive in the layout the handout asks for
 ```
 
+</details>
+
 ## Build and run
+
+<details>
+<summary>Commands for building one bit width and running the tests</summary>
 
 ```bash
 cd lab4/framework
@@ -59,7 +66,11 @@ make clean && make build QUANT_BITS=8   # 32 (fp32), 8, 4 or 2; default is 8 (sr
 Run `make clean` whenever `QUANT_BITS` changes. A quantized build loads `data/model/q<bits>/`, the fp32
 build loads `data/model/*.bin`.
 
-## Results (lab machine, 1,000 validation images)
+</details>
+
+## Results
+
+Measured on the lab machine with the 1,000 validation images. The accuracy columns were reproduced on October 8, 2026 by rebuilding all four bit widths and running the validation again ([log](results/val_mac_2026-10-08.txt)); storage sizes were checked against the files. Latency is specific to the lab machine and was not measured again.
 
 | Model | Storage | Latency (avg) | Top-1 | Top-10 |
 |---|---|---|---|---|
@@ -81,6 +92,9 @@ build loads `data/model/*.bin`.
 
 ## util scripts
 
+<details>
+<summary>What each helper script does</summary>
+
 | File | Purpose |
 |---|---|
 | `lab4_06.ipynb` | Lab 1 notebook extended for Lab 4 (activation profiling, validation export) |
@@ -93,38 +107,25 @@ build loads `data/model/*.bin`.
 The notebook needs the Lab 1 environment (`lab1_venv`) and `CNN_TinyImageNet.h5` next to it; the model
 file is not tracked in this repository.
 
+</details>
+
 ## Where this lab fits
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#7E22CE", "primaryTextColor": "#ffffff", "primaryBorderColor": "#2E1065", "lineColor": "#94A3B8", "secondaryColor": "#7E22CE", "tertiaryColor": "#2E1065", "clusterBkg": "#F8FAFC", "clusterBorder": "#94A3B8", "edgeLabelBackground": "#F1F5F9", "fontFamily": "ui-sans-serif, system-ui, sans-serif"}}}%%
-flowchart LR
-    L1["Lab 1 · Train in TensorFlow"] --> L2["Lab 2 · C++ framework"] --> L3["Lab 3 · MAC units"] --> L4["Lab 4 · Quantization"] --> L5["Lab 5 · Hardware integration"]
-    style L4 fill:#F0ABFC,color:#0B1220,stroke:#2E1065
-```
+<img src="assets/lab_flow.svg" alt="Lab 1 · Train in TensorFlow → Lab 2 · C++ framework → Lab 3 · MAC units → Lab 4 · Quantization → Lab 5 · Hardware integration" width="100%">
 
 ## Quantized inference path
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#7E22CE", "primaryTextColor": "#ffffff", "primaryBorderColor": "#2E1065", "lineColor": "#94A3B8", "secondaryColor": "#7E22CE", "tertiaryColor": "#2E1065", "clusterBkg": "#F8FAFC", "clusterBorder": "#94A3B8", "edgeLabelBackground": "#F1F5F9", "fontFamily": "ui-sans-serif, system-ui, sans-serif"}}}%%
-flowchart LR
-    P["Profile activation ranges"] --> X["Export scale, zero-point, int8 weights"]
-    X --> A["Accumulate (input − zero_point) × weight in int32"]
-    A --> D["Dequantize · ReLU"]
-    D --> Q["Requantize to int8 for the next layer"]
-    Q -->|"next layer"| A
-```
+<img src="assets/quant_path.svg" alt="Quantized inference path: activation ranges are profiled and scale, zero point and int8 weights exported once in Python; at inference each conv and dense layer accumulates (input minus zero point) times weight in int32, dequantizes and applies ReLU, then requantizes to int8 for the next layer" width="100%">
 
-## My role
+## Team and credits
 
-The Lab 4 commits in this repository are mine. `lab1_06/`, `lab2_src_06/` and `lab3_src_6/` are our earlier team submissions, included as the base this lab builds on.
+Lab 4 was submitted by Zach Dixon and Jongwoo Kim; the report lists both of us as authors.
 
-- Profiled weight and activation ranges (`weight_hist.py`, `act_minmax.py`).
-- Wrote the export script that computes each layer's scale and zero-point and writes int8 weights and int32 biases (`quantize_export.py`).
-- Added the quantized inference path to the C++ framework (`Quant.h`, `computeQuantized` in the conv and dense layers) behind one build flag, `QUANT_BITS`.
-- Added a validation mode (`./build/ml val`) and the script that exports 1,000 validation images.
-- Wrote the report (`submission/lab4_report_06.pdf`).
+- **In this repository:** the Lab 4 commits are Jongwoo's: the profiling scripts (`weight_hist.py`, `act_minmax.py`), the export script that computes each layer's scale and zero point (`quantize_export.py`), the quantized inference path in C++ (`Quant.h`, `computeQuantized` in the conv and dense layers) behind the `QUANT_BITS` build flag, the validation mode (`./build/ml val`) with the script that exports 1,000 validation images, and the report.
+- **Earlier team work it builds on:** `lab1_06/`, `lab2_src_06/` and `lab3_src_6/` are our submissions for Labs 1 to 3.
+- Corrections to this list are welcome.
 
-## What I learned
+## What I learned (Jongwoo)
 
 **Technical**
 - How scale and zero-point map a real range onto integers, and why accumulation must happen in int32 before requantizing for the next layer.

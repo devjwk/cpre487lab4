@@ -17,3 +17,4 @@ train_data/
 tensorflow-datasets/
 *.h5
 *_deq.bin
+.DS_Store

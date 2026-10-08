@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 190" role="img" aria-label="Quantized inference path: profile, export, then per layer accumulate, dequantize and requantize">
+<title>Quantized inference path</title>
+<style>.a{font:700 15px ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif}.b{font:500 12px ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif}.n{font:500 13px ui-sans-serif,system-ui,-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;fill:#334155}</style>
+<defs><marker id="h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker></defs>
+<rect x="20.0" y="60" width="208" height="68" fill="#7E22CE"/>
+<text x="124.0" y="90.0" text-anchor="middle" class="a" fill="#ffffff">Profile</text>
+<text x="124.0" y="109.0" text-anchor="middle" class="b" fill="#ffffff">activation ranges</text>
+<line x1="231.0" y1="94.0" x2="255.0" y2="94.0" stroke="#475569" stroke-width="2" marker-end="url(#h)"/>
+<rect x="258.0" y="60" width="208" height="68" fill="#7E22CE"/>
+<text x="362.0" y="90.0" text-anchor="middle" class="a" fill="#ffffff">Export</text>
+<text x="362.0" y="109.0" text-anchor="middle" class="b" fill="#ffffff">scale, zero-point, int8 weights</text>
+<line x1="469.0" y1="94.0" x2="493.0" y2="94.0" stroke="#475569" stroke-width="2" marker-end="url(#h)"/>
+<rect x="496.0" y="60" width="208" height="68" fill="#F0ABFC"/>
+<text x="600.0" y="90.0" text-anchor="middle" class="a" fill="#0B1220">Accumulate</text>
+<text x="600.0" y="109.0" text-anchor="middle" class="b" fill="#0B1220">(input − zero point) × weight</text>
+<line x1="707.0" y1="94.0" x2="731.0" y2="94.0" stroke="#475569" stroke-width="2" marker-end="url(#h)"/>
+<rect x="734.0" y="60" width="208" height="68" fill="#F0ABFC"/>
+<text x="838.0" y="90.0" text-anchor="middle" class="a" fill="#0B1220">Dequantize</text>
+<text x="838.0" y="109.0" text-anchor="middle" class="b" fill="#0B1220">then ReLU</text>
+<line x1="945.0" y1="94.0" x2="969.0" y2="94.0" stroke="#475569" stroke-width="2" marker-end="url(#h)"/>
+<rect x="972.0" y="60" width="208" height="68" fill="#F0ABFC"/>
+<text x="1076.0" y="90.0" text-anchor="middle" class="a" fill="#0B1220">Requantize</text>
+<text x="1076.0" y="109.0" text-anchor="middle" class="b" fill="#0B1220">to int8 for the next layer</text>
+<path d="M1076.0 128 L1076.0 156 L600.0 156 L600.0 134" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#h)"/>
+<text x="838.0" y="176" text-anchor="middle" class="n">repeated for every conv and dense layer</text>
+<text x="243.0" y="40" text-anchor="middle" class="n">once, in Python</text>
+<text x="838.0" y="40" text-anchor="middle" class="n">at inference, in C++ (sums kept in int32)</text>
+</svg>
