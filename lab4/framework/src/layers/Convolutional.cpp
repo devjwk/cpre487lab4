@@ -71,10 +71,7 @@ void ConvolutionalLayer::computeNaive(const LayerData& dataIn) const {
 
 }
 
-// Lab 4: integer convolution
-//   acc (int32) = bias + sum((in - inZero) * weight)        int8 x int8 MACs, int32 accumulate
-//   y   (fp32)  = acc / (inScale * wScale)                  dequantize
-//   ReLU on y, then requantize for the next layer (or keep fp32 if outScale == 0)
+// acc = bias + sum((in - inZero) * w), y = acc / (inScale * wScale)
 void ConvolutionalLayer::computeQuantized(const LayerData& dataIn) const {
     const auto& inDims = dataIn.getParams().dims;
     const auto& outDims = getOutputParams().dims;
@@ -88,7 +85,7 @@ void ConvolutionalLayer::computeQuantized(const LayerData& dataIn) const {
     const std::size_t kH = weightDims[0];
     const std::size_t kW = weightDims[1];
 
-    // The first layer receives the fp32 image: quantize it once with this layer's input parameters
+    // First layer: quantize the fp32 image
     std::vector<i8> quantizedImage;
     const i8* in = (const i8*)dataIn.raw();
     if (dataIn.getParams().elementSize == sizeof(fp32)) {
@@ -119,7 +116,7 @@ void ConvolutionalLayer::computeQuantized(const LayerData& dataIn) const {
                     }
                 }
 
-                // Dequantize, then ReLU in the real domain (so the zero point is handled correctly)
+                // ReLU after dequantizing
                 fp32 y = acc / accScale;
                 if (y < 0) y = 0;
 

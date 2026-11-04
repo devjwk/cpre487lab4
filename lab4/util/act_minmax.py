@@ -1,11 +1,9 @@
-# Lab 4 §3.3: per-layer activation min/max over 1,000 random training images.
-# Run inside the notebook after `model` and `tiny_imagenet_builder` exist:
-#   %run -i act_minmax.py
+# Activation min/max over 1,000 training images. In the notebook: %run -i act_minmax.py
 import json
 import numpy as np
 import tensorflow as tf
 
-N_TRAIN = tiny_imagenet_builder.info.splits["train"].num_examples  # 100,000
+N_TRAIN = tiny_imagenet_builder.info.splits["train"].num_examples
 N_SAMPLE, BATCH, SEED = 1000, 100, 487
 
 mask = np.zeros(N_TRAIN, dtype=bool)

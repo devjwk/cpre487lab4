@@ -3,8 +3,7 @@
 // Disable all timers
 // #define DISABLE_TIMING
 
-// Lab 4: bit width of weights/activations. 32 = original fp32 model, 8/4/2 = quantized model.
-// Override with `make QUANT_BITS=8` (run `make clean` first when switching).
+// 32 = fp32, 8/4/2 = quantized (make clean before switching)
 #ifndef QUANT_BITS
 #define QUANT_BITS 8
 #endif

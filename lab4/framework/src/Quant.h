@@ -11,15 +11,11 @@
 
 namespace ML {
 
-// Largest/smallest representable quantized value for the current bit width (8 bit: -128..127)
+// Quantized range for QUANT_BITS
 constexpr i32 QMAX = (i32)((1LL << (QUANT_BITS - 1)) - 1);
 constexpr i32 QMIN = -QMAX - 1;
 
-// Per-layer quantization parameters (Lab 4 Section 4)
-//   float = (int - zero) / scale
-//   in*  : how this layer's input activations are quantized
-//   wScale: weight scale (weight zero point is 0); bias scale = inScale * wScale
-//   out* : how to requantize the output for the next layer; outScale == 0 means output dequantized fp32
+// float = (int - zero) / scale; outScale == 0 means the output stays fp32
 struct QuantParams {
     bool enabled = false;
     fp32 inScale = 1;
@@ -29,7 +25,7 @@ struct QuantParams {
     i32 outZero = 0;
 };
 
-// Round-to-nearest-even (matches numpy's round used to export weights) and clamp to the quantized range
+// Round half to even (like numpy) and clamp
 inline i8 quantize(fp32 x, fp32 scale, i32 zero) {
     i32 q = (i32)std::nearbyint(x * scale) + zero;
     if (q > QMAX) q = QMAX;
@@ -39,8 +35,7 @@ inline i8 quantize(fp32 x, fp32 scale, i32 zero) {
 
 inline fp32 dequantize(i32 q, fp32 scale, i32 zero) { return (q - zero) / scale; }
 
-// Read "<layer> <inScale> <inZero> <wScale>" lines (one per conv/dense layer, in model order) and chain
-// each layer's output parameters to the next layer's input parameters. The last layer outputs fp32.
+// One line per conv/dense layer: <layer> <inScale> <inZero> <wScale>
 inline std::vector<QuantParams> loadQuantParams(const Path& file) {
     std::ifstream in(file);
     if (!in.is_open()) throw std::runtime_error("Failed to open quantization params: " + file);

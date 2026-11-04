@@ -87,7 +87,6 @@ class DenseLayer : public Layer {
     }
 
    private:
-    // Lab 4: same integer MAC / dequantize / ReLU / requantize flow as ConvolutionalLayer::computeQuantized
     void computeQuantized(const LayerData& dataIn) const {
         const std::size_t inputSize = dataIn.getParams().flat_count();
         const std::size_t outputSize = getOutputParams().flat_count();
